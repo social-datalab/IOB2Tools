@@ -98,7 +98,7 @@ class Spacy:
     def token_to_iob(self, token):
         iob = token.ent_iob_
         enttype = self._mapping.get(token.ent_type_, token.ent_type_)
-        iob_tag = iob if iob == 'O' else f'{iob}_{enttype}'
+        iob_tag = iob if iob == 'O' else f'{iob}-{enttype}'
 
         return f'{token.text}{self._sep}{iob_tag}'
 

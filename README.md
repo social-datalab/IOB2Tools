@@ -215,17 +215,17 @@ It process XML contents included in tag `text` and uses a blank space as IOB fie
 Results:
 
 ```
-Alejandro B_PER
+Alejandro B-PER
 está O
 viajando O
 de O
-Bogotá B_LOC
+Bogotá B-LOC
 a O
-Los B_LOC
-Ángeles I_LOC
+Los B-LOC
+Ángeles I-LOC
 , O
 en O
-California B_LOC
+California B-LOC
 . O
 
 Allí O
@@ -234,10 +234,10 @@ al O
 congreso O
 de O
 la O
-Association B_ORG
-for I_ORG
-Computational I_ORG
-Linguistics I_ORG
+Association B-ORG
+for I-ORG
+Computational I-ORG
+Linguistics I-ORG
 . O
 ```
 
@@ -263,27 +263,27 @@ This command will process the sample text file using the default options (we ove
 Results:
 
 ```
-Paulo	B_PER
+Paulo	B-PER
 está	O
 a	O
 viajar	O
 de	O
-Lisboa	B_LOC
+Lisboa	B-LOC
 para	O
-São	B_LOC
-Francisco	I_LOC
+São	B-LOC
+Francisco	I-LOC
 ,	O
 na	O
-Califórnia	B_LOC
+Califórnia	B-LOC
 .	O
 Aí	O
 participará	O
 na	O
 conferência	O
 da	O
-Association	B_ORG
-for	I_ORG
-Computational	I_ORG
-Linguistics	I_ORG
+Association	B-ORG
+for	I-ORG
+Computational	I-ORG
+Linguistics	I-ORG
 .	O
 ```
