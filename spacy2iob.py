@@ -7,7 +7,7 @@ import spacy
 from bs4 import BeautifulSoup as bs
 
 
-__version = '0.1.0'
+__version = '0.1.1'
 
 fallback_cfg = {
     "general": {
@@ -261,9 +261,9 @@ def get_iob_tokens_from_xml(corpusfile):
 
         if turn.text is '':
             continue
-        offsets = get_entity_indexes(turn)
-        for i, entity in enumerate(turn.find_all(entity_tag)):
-            if args.source == 'golden':
+        if args.source == 'golden':
+            offsets = get_entity_indexes(turn)
+            for i, entity in enumerate(turn.find_all(entity_tag)):
                 try:
                     entities.append(
                         (
@@ -281,7 +281,8 @@ def get_iob_tokens_from_xml(corpusfile):
                         file=sys.stderr
                     )
                     sys.exit(2)
-            else:
+        else:
+            for entity in turn.find_all(entity_tag):
                 entity.unwrap()
 
         doc = nlp(re.sub(r'\s+', ' ', turn.text.strip()))
