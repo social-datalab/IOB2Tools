@@ -212,14 +212,14 @@ def find_entities(entities, doc):
         coords = sequence_in(entity, tokens, ent_idx)
 
         for idx, i in enumerate(range(coords[0], coords[1])):
-            tokens[i] = "{}{}{}_{}".format(
+            tokens[i] = "{}{}{}-{}".format(
                 tokens[i],
                 IOB_separator,
                 "B" if idx == 0 else "I", enttype
             )
 
     for i in range(len(tokens)):
-        if not re.search(r'{}[BI]_'.format(IOB_separator), tokens[i]):
+        if not re.search(r'{}[BI]-'.format(IOB_separator), tokens[i]):
             tokens[i] = "{}{}{}".format(tokens[i], IOB_separator, "O")
         if doc[i].is_sent_end and segment:
             tokens[i] = tokens[i] + '\n'
