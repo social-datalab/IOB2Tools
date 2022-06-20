@@ -7,11 +7,12 @@ import spacy
 from bs4 import BeautifulSoup as bs
 
 
-__version = '0.1.2'
+__version = '0.1.3'
 
 fallback_cfg = {
     "general": {
         "iob_separator": "\t",
+        "with_pos": False,
     },
     "golden": {
         "tags": ["a", "q"],
@@ -100,7 +101,9 @@ class Spacy:
         enttype = self._mapping.get(token.ent_type_, token.ent_type_)
         iob_tag = iob if iob == 'O' else f'{iob}-{enttype}'
 
-        return f'{token.text}{self._sep}{iob_tag}'
+        if store_pos:
+            return self._sep.join([token.text, token.pos_, iob_tag])
+        return self._sep.join([token.text, iob_tag])
 
     def span_to_iob(self, doc):
         tokens = []
@@ -150,6 +153,13 @@ def parse_args():
         type=str,
         choices=['spacy', 'golden'],
         help='Source of the entity tags ("golden" = XML file with the gold standard)',  # noqa
+    )
+    parser.add_argument(
+        '-p',
+        '--with-pos',
+        action='store_true',
+        default=False,
+        help='Store POS tags'
     )
     parser.add_argument(
         '-f',
@@ -212,15 +222,19 @@ def find_entities(entities, doc):
         coords = sequence_in(entity, tokens, ent_idx)
 
         for idx, i in enumerate(range(coords[0], coords[1])):
-            tokens[i] = "{}{}{}-{}".format(
-                tokens[i],
-                IOB_separator,
-                "B" if idx == 0 else "I", enttype
-            )
+            tokens[i] = [
+                tokens[i], "{}-{}".format(
+                    "B" if idx == 0 else "I", enttype
+                )
+            ]
 
     for i in range(len(tokens)):
-        if not re.search(r'{}[BI]-'.format(IOB_separator), tokens[i]):
-            tokens[i] = "{}{}{}".format(tokens[i], IOB_separator, "O")
+        if isinstance(tokens[i], str):
+            tokens[i] = [tokens[i], "O"]
+        if store_pos:
+            tokens[i].insert(1, doc[i].pos_)
+
+        tokens[i] = IOB_separator.join(tokens[i])
         if doc[i].is_sent_end and segment:
             tokens[i] = tokens[i] + '\n'
 
@@ -314,6 +328,7 @@ entity_attr = cfg.get_property('golden', 'entity_attr')
 mapping = cfg.get_property(args.source, 'mapping')
 IOB_separator = cfg.get_property('general', 'iob_separator')
 segment = cfg.get_property('spacy', 'split_sentences')
+store_pos = args.with_pos or cfg.get_property('general', 'with_pos')
 
 nlp = Spacy(
     separator=IOB_separator,
